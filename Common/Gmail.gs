@@ -6,7 +6,7 @@
 
 function sendSimpleEmail(){
   MailApp.sendEmail({
-     to: "hairizuan@sparkline.com, hairizuanbinnoorazman@gmail.com",
+     to: "",
      subject: "Logos",
      htmlBody: "LOL"
    });

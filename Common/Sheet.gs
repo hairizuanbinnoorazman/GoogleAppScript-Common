@@ -175,3 +175,73 @@ function setDataList(spreadsheetID, sheetName, array, referencePoint){
   // Stop logging
   logFunctionStop(nameOfFunction);
 }
+
+/**
+ * Set headers to array values for easier manipulation
+ * @param {string} spreadsheetID ID of spreadsheet to grab the data from
+ * @param {string} sheetname Name of sheet in the spreadsheet ID to grab teh data from
+ * @param {string} referencePoint Reference Point e.g. "A1"
+ */
+function getDataTable_namedArray(spreadsheetID, sheetName, referencePoint){
+  // Log start of function
+  nameOfFunction = "getDataTable_namedArray";
+  logFunctionStart(nameOfFunction);
+  
+  // Initialize spreadsheet
+  var spreadsheet = SpreadsheetApp.openById(spreadsheetID);
+  var sheet = spreadsheet.getSheetByName(sheetName);
+  
+  // Grab current row and column
+  var range = sheet.getRange(referencePoint);
+  var currentRow = range.getRow();
+  var currentColumn = range.getColumn();
+  
+  // Grab max column
+  var i = 1;
+  while(sheet.getRange(currentRow, currentColumn + i).getValue() != ""){
+    i = i + 1;
+  }
+  var noOfColumns = i;
+  logVariable(nameOfFunction, "Number of columns", noOfColumns);
+  
+  // Grab max row
+  var j =1
+  while(sheet.getRange(currentRow + j, currentColumn).getValue() != ""){
+    j = j + 1;
+  }
+  var noOfRows = j - 1; // Take into account of header row
+  logVariable(nameOfFunction, "Number of rows", noOfRows);
+  
+  // Grab the full dataset
+  // Added 1 to current row to take into account of the header row
+  var dataRaw = sheet.getSheetValues(currentRow + 1, currentColumn, noOfRows, noOfColumns);
+  
+  // Grab the header row
+  var dataHeader = sheet.getSheetValues(currentRow, currentColumn, 1, noOfColumns)
+  
+  // Assign the data to appropiate header key
+  var data = []
+  var k = 0
+  var m = 0
+  while(k < dataRaw.length){
+    data.push({})
+    while(m < dataHeader[0].length){
+      data[k][dataHeader[0][m]] = dataRaw[k][m]
+      m = m + 1
+    }
+    m = 0
+    k = k + 1
+  }
+  
+  Logger.log("SampleData")
+  Logger.log(data[0]);
+  
+  logVariable(nameOfFunction, "List of keys in this array", Object.keys(data[0]))
+  
+  // Stop logging
+  logFunctionStop(nameOfFunction);
+  
+  // Return values
+  return(data)
+}
+
