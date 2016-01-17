@@ -177,10 +177,11 @@ function setDataList(spreadsheetID, sheetName, array, referencePoint){
 }
 
 /**
- * Set headers to array values for easier manipulation
+ * Get data from a table in a one of the google spreadsheet into a named array for easier refernece in certain cases
  * @param {string} spreadsheetID ID of spreadsheet to grab the data from
  * @param {string} sheetname Name of sheet in the spreadsheet ID to grab teh data from
  * @param {string} referencePoint Reference Point e.g. "A1"
+ * @return {Array<string>} data Returns a 2D array that contains a named array for easier reference when necessary
  */
 function getDataTable_namedArray(spreadsheetID, sheetName, referencePoint){
   // Log start of function
@@ -245,3 +246,12 @@ function getDataTable_namedArray(spreadsheetID, sheetName, referencePoint){
   return(data)
 }
 
+/**
+ * 
+ * @param {string} spreadsheetID ID of spreadsheet to grab the data from
+ * @param {string} sheetname Name of sheet in the spreadsheet ID to grab teh data from
+ * @param {string} referencePoint Reference Point e.g. "A1"
+ * @return {Array<string>} data Returns a 2D array that contains a named array for easier reference when necessary
+ */
+function getKeyValuePair(spreadsheetID, sheetName, referencePoint){
+}
