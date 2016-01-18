@@ -25,3 +25,9 @@ function jsonTest(){
   lol = [{yah:"bah"}, {ahs:"bdas", ssdas:1}]
   Logger.log(JSON.stringify(lol, null, '  '))
 }
+
+function nullTest(){
+  yay = 1
+  Logger.log(yay == null)
+  Logger.log(yay != null)
+}

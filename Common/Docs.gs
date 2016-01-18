@@ -15,46 +15,97 @@ function getPrettyJSON(object){
 }
 
 /**
- * Replace the table tag in a google docs
+ * Replace the table tag in a google docs body
  * The table tag should follow the following schema: {{table1}}
+ * @param {string} documentID The document ID that is to be manipulated
  * @param {string} tag The tag is to be replaced in google docs
  * @param (Array<string>} array2D The array that is to be put into the table
  */
-function template_replace_tableTag(tag, array2D){
+function template_replace_tableTag(documentID, tag, array2D){
 }
 
 /**
- * Replace the unordered list tag in a google docs
+ * Replace the unordered list tag in a google docs body
  * The unordered tag should follow the following schema: {{unordered1}}
+ * @param {string} documentID The document ID that is to be manipulated
  * @param {string} tag The tag is to be replaced in google docs
  * @param {Array<string>} array A single list array that is to be put into the list
  */
-function template_replace_tableUnordered(tag, array){
+function template_replace_tableUnordered(documentID, tag, array){
 }
 
 /**
- * Replace the ordered list tag in a google docs
+ * Replace the ordered list tag in a google docs body
  * The ordered tag should follow the following schema: {{ordered1}}
+ * @param {string} documentID The document ID that is to be manipulated
  * @param {string} tag The tag is to be replaced in google docs
  * @param {Array<string>} array A single list array that is to be put into the list
  */
-function template_replace_tableOrdered(tag, array){
+function template_replace_tableOrdered(documentID, tag, array){
 }
 
 /**
- * Replace the paragraph list tag in a google docs
- * The paragraph tag should follow the following schema: {{paragraph1}}
+ * Replace the paragraph list tag in a google docs body
+ * The paragraph tag should follow the following schema: {{text1}}
+ * @param {string} documentID The document ID that is to be manipulated
  * @param {string} tag The tag is to be replaced in google docs
  * @param {string} text The text that is to be used to replace the tag
  */
-function template_replace_paragraph(tag, text){
+function template_replace_text(documentID, tag, text){
+  // Get document body for editing
+  var document = DocumentApp.openById(documentID);
+  var documentBody = document.getBody();
+  
+  // Replace tag with text
+  documentBody.replaceText(tag, text);
 }
 
 /**
- * Replace the image tag in a google docs
+ * Replace the image tag in a google docs body
  * The image tag should follow the following schema {{image}}
+ * The image to be added has to be inside google drive for this to be usable
+ * @param {string} documentID The dcoument ID that is to be manipulated
+ * @param {string} tag The tag is to be replaced in google docs
+ * @param {string} imageID The image id that is to be used to be replace the tag
+ * @param {integer} imageDivisor The divisor value that is used to resize the image. Set to null if not used.
+ * @param {integer} minWidth The minimum width the image need to be. Set to null if its not used
+ * @param {integer} minHeight The minimum height the image needs to be. Set to nuull if its not used.
+ */
+function template_replace_image(documentID, tag, imageID, imageDivisor, minWidth, minHeight){
+  // Log start of function
+  nameOfFunction = "template_replace_image";
+  logFunctionStart(nameOfFunction);
+  
+  // Get document body for editing
+  var document = DocumentApp.openById(documentID);
+  var documentBody = document.getBody();
+  
+  // Get image blob
+  var image = DriveApp.getFileById(imageID);
+  var imageBlob = image.getBlob();
+  
+  // Get position of the tag that is to be replaced
+  var documentElement = documentBody.findText(tag).getElement();
+  
+  // Replace the tag with the image
+  var imageElement = documentBody.insertImage(documentBody.getChildIndex(documentElement.getParent()), imageBlob);
+  
+  // Remove image tag
+  documentBody.replaceText(tag, "");
+  
+  // Resize using image divisor
+  imageElement.setWidth(imageElement.getWidth()/imageDivisor);
+  imageElement.setHeight(imageElement.getHeight()/imageDivisor);
+  
+  logFunctionStop(nameOfFunction);
+}
+
+/**
+ * Replace the image tag in a google docs header
+ * The text tag should follow the following schema {{headerText1}}
+ * @param {string} documentID The dcoument ID that is to be manipulated
  * @param {string} tag The tag is to be replaced in google docs
  * @param {string} imageID The image id that is to be used to be replace the tag
  */
-function template_replace_image(tag, imageID){
+function headerTemplate_replace_text(documentID, tag, text){
 }
