@@ -12,7 +12,7 @@
  */
 function sendSimpleEmail(receipient, subject, body){
   // Function to log function starting and ending
-  nameOfFunction("sendSimpleEmail");
+  nameOfFunction = "sendSimpleEmail";
   logFunctionStart(nameOfFunction);
     
   MailApp.sendEmail({

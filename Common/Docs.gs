@@ -31,7 +31,7 @@ function template_replace_tableTag(documentID, tag, array2D){
  * @param {string} tag The tag is to be replaced in google docs
  * @param {Array<string>} array A single list array that is to be put into the list
  */
-function template_replace_tableUnordered(documentID, tag, array){
+function template_replace_listUnordered(documentID, tag, array){
 }
 
 /**
@@ -41,7 +41,7 @@ function template_replace_tableUnordered(documentID, tag, array){
  * @param {string} tag The tag is to be replaced in google docs
  * @param {Array<string>} array A single list array that is to be put into the list
  */
-function template_replace_tableOrdered(documentID, tag, array){
+function template_replace_listOrdered(documentID, tag, array){
 }
 
 /**
@@ -52,24 +52,31 @@ function template_replace_tableOrdered(documentID, tag, array){
  * @param {string} text The text that is to be used to replace the tag
  */
 function template_replace_text(documentID, tag, text){
+  // Log start of function
+  nameOfFunction = "template_replace_text";
+  logFunctionStart(nameOfFunction);
+  
   // Get document body for editing
   var document = DocumentApp.openById(documentID);
   var documentBody = document.getBody();
   
   // Replace tag with text
   documentBody.replaceText(tag, text);
+  
+  logFunctionStart(nameOfFunction);
 }
 
 /**
  * Replace the image tag in a google docs body
  * The image tag should follow the following schema {{image}}
  * The image to be added has to be inside google drive for this to be usable
+ * Only the first instance will be replaced. The tags that have the same name would be erased at the end of this function.
  * @param {string} documentID The dcoument ID that is to be manipulated
  * @param {string} tag The tag is to be replaced in google docs
  * @param {string} imageID The image id that is to be used to be replace the tag
  * @param {integer} imageDivisor The divisor value that is used to resize the image. Set to null if not used.
- * @param {integer} minWidth The minimum width the image need to be. Set to null if its not used
- * @param {integer} minHeight The minimum height the image needs to be. Set to nuull if its not used.
+ * @param {integer} minWidth The minimum width the image need to be. Set to null if its not used. However, there are special parameters 
+ * @param {integer} minHeight The minimum height the image needs to be. Set to null if its not used.
  */
 function template_replace_image(documentID, tag, imageID, imageDivisor, minWidth, minHeight){
   // Log start of function
@@ -93,19 +100,62 @@ function template_replace_image(documentID, tag, imageID, imageDivisor, minWidth
   // Remove image tag
   documentBody.replaceText(tag, "");
   
+  // Getting the special image for a document
+  var documentWidth = documentBody.getPageWidth();
+  var documentHeight = documentBody.getPageHeight();
+  var pageWidth = documentWidth;
+  var halfPageWidth = documentWidth/2;
+  
   // Resize using image divisor
-  imageElement.setWidth(imageElement.getWidth()/imageDivisor);
-  imageElement.setHeight(imageElement.getHeight()/imageDivisor);
+  if(imageDivisor != null){
+    imageElement.setWidth(imageElement.getWidth()/imageDivisor);
+    imageElement.setHeight(imageElement.getHeight()/imageDivisor);
+  } else if(minWidth != null){
+    // Special variable. Use 'page' string to invoke
+    if(minWidth == "page"){
+      imageDivisor = imageElement.getWidth()/pageWidth;
+      imageElement.setWidth(imageElement.getWidth()/imageDivisor);
+      imageElement.setHeight(imageElement.getHeight()/imageDivisor);
+    } 
+    // Special variable. Use 'halfPage' string to invoke
+    else if (minWidth == "halfPage"){
+      imageDivisor = imageElement.getWidth()/halfPageWidth;
+      imageElement.setWidth(imageElement.getWidth()/imageDivisor);
+      imageElement.setHeight(imageElement.getHeight()/imageDivisor);
+    } 
+    else {
+      imageDivisor = imageElement.getWidth()/minWidth;
+      imageElement.setWidth(imageElement.getWidth()/imageDivisor);
+      imageElement.setHeight(imageElement.getHeight()/imageDivisor);
+    }
+  } else if(minHeight != null){
+    imageDivisor = imageElement.getHeight()/minHeight;
+    imageElement.setWidth(imageElement.getWidth()/imageDivisor);
+    imageElement.setHeight(imageElement.getWidth()/imageDivisor);
+  }
+  
   
   logFunctionStop(nameOfFunction);
 }
 
 /**
- * Replace the image tag in a google docs header
+ * Replace the header text tag in a google docs header
  * The text tag should follow the following schema {{headerText1}}
  * @param {string} documentID The dcoument ID that is to be manipulated
  * @param {string} tag The tag is to be replaced in google docs
  * @param {string} imageID The image id that is to be used to be replace the tag
  */
 function headerTemplate_replace_text(documentID, tag, text){
+  // Log start of function
+  nameOfFunction = "headerTemplace_replace_text";
+  logFunctionStart(nameOfFunction);
+  
+  // Get document body for editing
+  var document = DocumentApp.openById(documentID);
+  var documentHeader = document.getHeader();
+  
+  // Replace tag with text
+  documentHeader.replaceText(tag, text);
+  
+  logFunctionStop(nameOfFunction);
 }

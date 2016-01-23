@@ -247,11 +247,61 @@ function getDataTable_namedArray(spreadsheetID, sheetName, referencePoint){
 }
 
 /**
- * 
+ * Get data from a table in a one of the google spreadsheet into a named array for easier refernece if there is only one instance of such settings
+ * This is a special form of table where the key is in the first column and the second column is the value
+ * Main reason for providing this is to allow for easier grabbing of settings from the googlesheets providing quick interface for quick and easy tasks
+ * As compared to writing out a proper ui for it
  * @param {string} spreadsheetID ID of spreadsheet to grab the data from
  * @param {string} sheetname Name of sheet in the spreadsheet ID to grab teh data from
  * @param {string} referencePoint Reference Point e.g. "A1"
  * @return {Array<string>} data Returns a 2D array that contains a named array for easier reference when necessary
  */
 function getKeyValuePair(spreadsheetID, sheetName, referencePoint){
+  // Log start of function
+  nameOfFunction = "getKeyValuePair";
+  logFunctionStart(nameOfFunction);
+  
+  // Initialize spreadsheet
+  var spreadsheet = SpreadsheetApp.openById(spreadsheetID);
+  var sheet = spreadsheet.getSheetByName(sheetName);
+  
+  // Grab current row and column
+  var range = sheet.getRange(referencePoint);
+  var currentRow = range.getRow();
+  var currentColumn = range.getColumn();
+  
+  // Grab max column
+  // Max column in this key pair function is 2.
+  // There is the key and pair column
+  var noOfColumns = 2;
+  logVariable(nameOfFunction, "Number of columns", 2);
+  
+  // Grab max row
+  var j = 1
+  while(sheet.getRange(currentRow + j, currentColumn).getValue() != ""){
+    j = j + 1;
+  }
+  var noOfRows = j; // Take into account of header row
+  logVariable(nameOfFunction, "Number of rows", noOfRows);
+  
+  // Grab the full dataset
+  // Added 1 to current row to take into account of the header row
+  var dataRaw = sheet.getSheetValues(currentRow, currentColumn, noOfRows, noOfColumns);
+  
+  // Assign the data to appropiate header key
+  var data = {}
+  var k = 0 // k is defined as key - rows
+  while(k < dataRaw.length){
+    data[dataRaw[k][0]] = dataRaw[k][1]
+    k = k + 1
+  }
+  
+  Logger.log("SampleData")
+  Logger.log(data);
+  
+  // Stop logging
+  logFunctionStop(nameOfFunction);
+  
+  // Return values
+  return(data)
 }
